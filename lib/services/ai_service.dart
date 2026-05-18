@@ -9,7 +9,7 @@ class AiService {
   static Future<Map<String, dynamic>> parseMeasurements(
       String text) async {
     final model = GenerativeModel(
-      model:  'gemini-2.0-flash',
+      model:  'gemini-1.5-flash-8b',
       apiKey: _apiKey,
     );
 
@@ -58,7 +58,7 @@ Return this exact JSON structure (use null for missing values):
     String? fabric,
   }) async {
     final model = GenerativeModel(
-      model:  'gemini-2.0-flash',
+      model: 'gemini-1.5-flash-8b',
       apiKey: _apiKey,
     );
 

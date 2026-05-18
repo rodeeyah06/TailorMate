@@ -35,6 +35,8 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
   static const _pinkBlush = Color(0xFFFBEAF0);
   static const _cream = Color(0xFFFDF8F2);
 
+  Client get client => _client ?? widget.client;
+
   @override
   void initState() {
     super.initState();
@@ -60,8 +62,6 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
     });
   }
 
-  Client get client => _client ?? widget.client;
-
   void _shareToWhatsApp() {
     final m = _latestMeasurement;
     final c = client;
@@ -73,7 +73,7 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
       if (m.bust != null) text += '• Bust: ${m.bust}"\n';
       if (m.underbust != null)
         text += '• Underbust: ${m.underbust}"\n';
-      if (m.nipple_to_nipple!= null)
+      if (m.nipple_to_nipple != null)
         text += '• Nipple to Nipple: ${m.nipple_to_nipple}"\n';
       if (m.waist != null) text += '• Waist: ${m.waist}"\n';
       if (m.hips != null) text += '• Hips: ${m.hips}"\n';
@@ -160,8 +160,7 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
                       child: Container(
-                        width: 36,
-                        height: 36,
+                        width: 36, height: 36,
                         decoration: BoxDecoration(
                           color: const Color(0xFF2C1F28),
                           borderRadius:
@@ -184,8 +183,7 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
                     GestureDetector(
                       onTap: _deleteClient,
                       child: Container(
-                        width: 36,
-                        height: 36,
+                        width: 36, height: 36,
                         decoration: BoxDecoration(
                           color: const Color(0xFF2C1F28),
                           borderRadius:
@@ -207,16 +205,15 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
                 Row(
                   children: [
                     Container(
-                      width: 52,
-                      height: 52,
+                      width: 52, height: 52,
                       decoration: BoxDecoration(
                         color: _pink,
                         borderRadius:
                         BorderRadius.circular(14),
                         image: client.photoPath != null
                             ? DecorationImage(
-                          image: FileImage(
-                              File(client.photoPath!)),
+                          image: FileImage(File(
+                              client.photoPath!)),
                           fit: BoxFit.cover,
                         )
                             : null,
@@ -264,63 +261,57 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
                   ],
                 ),
                 const SizedBox(height: 14),
-
-                // ── ACTION BUTTONS ──
                 Row(
                   children: [
                     Expanded(
-                      child: _actionBtn(
-                        'Share',
-                        Icons.share_outlined,
-                        filled: true,
-                        onTap: _shareToWhatsApp,
-                      ),
+                      child: _actionBtn('Share',
+                          Icons.share_outlined,
+                          filled: true,
+                          onTap: _shareToWhatsApp),
                     ),
                     const SizedBox(width: 6),
                     Expanded(
                       child: _actionBtn(
-                        'Edit',
-                        Icons.edit_outlined,
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => EditClientScreen(
-                              client: client,
-                              latestMeasurement:
-                              _latestMeasurement,
+                          'Edit', Icons.edit_outlined,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  EditClientScreen(
+                                    client: client,
+                                    latestMeasurement:
+                                    _latestMeasurement,
+                                  ),
                             ),
-                          ),
-                        ).then((_) => _loadData()),
-                      ),
+                          ).then((_) => _loadData())),
                     ),
                     const SizedBox(width: 6),
                     Expanded(
                       child: _actionBtn(
-                        'Order',
-                        Icons.receipt_long_outlined,
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => AddOrderScreen(
-                              clientId: client.id!,
-                              clientName: client.name,
+                          'Order',
+                          Icons.receipt_long_outlined,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  AddOrderScreen(
+                                    clientId: client.id!,
+                                    clientName: client.name,
+                                  ),
                             ),
-                          ),
-                        ).then((_) => _loadData()),
-                      ),
+                          ).then((_) => _loadData())),
                     ),
                     const SizedBox(width: 6),
                     Expanded(
                       child: _actionBtn(
-                        'PDF',
-                        Icons.picture_as_pdf_outlined,
-                        onTap: () =>
-                            PdfService.printClientMeasurements(
-                              client: client,
-                              measurement: _latestMeasurement,
-                              orders: _orders,
-                            ),
-                      ),
+                          'PDF',
+                          Icons.picture_as_pdf_outlined,
+                          onTap: () =>
+                              PdfService.printClientMeasurements(
+                                client: client,
+                                measurement: _latestMeasurement,
+                                orders: _orders,
+                              )),
                     ),
                   ],
                 ),
@@ -364,10 +355,8 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
                     ),
                     child: Row(
                       children: [
-                        // spine
                         Container(
-                          width: 8,
-                          height: 320,
+                          width: 8, height: 320,
                           decoration: const BoxDecoration(
                             color: _pink,
                             borderRadius: BorderRadius.only(
@@ -376,7 +365,6 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
                             ),
                           ),
                         ),
-                        // left measurements
                         Expanded(
                           child: Padding(
                             padding:
@@ -394,7 +382,8 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
                                     _latestMeasurement
                                         ?.nipple_to_nipple),
                                 _measRow('Waist',
-                                    _latestMeasurement?.waist),
+                                    _latestMeasurement
+                                        ?.waist),
                                 _measRow('Hips',
                                     _latestMeasurement?.hips),
                                 _measRow('Back',
@@ -405,7 +394,6 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
                             ),
                           ),
                         ),
-                        // silhouette
                         SizedBox(
                           width: 80,
                           child: CustomPaint(
@@ -413,7 +401,6 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
                             painter: _SilhouettePainter(),
                           ),
                         ),
-                        // right measurements
                         Expanded(
                           child: Padding(
                             padding:
@@ -447,50 +434,49 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
                       ],
                     ),
                   ),
-
+                  
                   // ── NOTES ──
-                  if (client.notes != null &&
-                      client.notes!.isNotEmpty) ...[
-                    const SizedBox(height: 16),
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius:
-                        BorderRadius.circular(12),
-                        border: Border(
-                          left: const BorderSide(
-                              color: _pink, width: 3),
-                          top: BorderSide(color: _pinkSoft),
-                          right:
-                          BorderSide(color: _pinkSoft),
-                          bottom:
-                          BorderSide(color: _pinkSoft),
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment:
-                        CrossAxisAlignment.start,
-                        children: [
-                          Text('Notes',
-                              style: GoogleFonts.dmSans(
-                                  fontSize: 10,
-                                  color: _pink,
-                                  fontWeight: FontWeight.w500,
-                                  letterSpacing: .06)),
-                          const SizedBox(height: 4),
-                          Text(client.notes!,
-                              style: GoogleFonts.dmSans(
-                                  fontSize: 13,
-                                  color:
-                                  const Color(0xFF5A3040),
-                                  height: 1.5)),
-                        ],
+                  const SizedBox(height: 16),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border(
+                        left: const BorderSide(color: _pink, width: 3),
+                        top: BorderSide(color: _pinkSoft),
+                        right: BorderSide(color: _pinkSoft),
+                        bottom: BorderSide(color: _pinkSoft),
                       ),
                     ),
-                  ],
-
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Notes',
+                            style: GoogleFonts.dmSans(
+                                fontSize: 10,
+                                color: _pink,
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: .06)),
+                        const SizedBox(height: 4),
+                        Text(
+                          (client.notes != null && client.notes!.isNotEmpty)
+                              ? client.notes!
+                              : 'No notes — tap Edit to add',
+                          style: GoogleFonts.dmSans(
+                              fontSize: 13,
+                              color: (client.notes != null && client.notes!.isNotEmpty)
+                                  ? const Color(0xFF5A3040)
+                                  : const Color(0xFFB090A0),
+                              fontStyle: (client.notes != null && client.notes!.isNotEmpty)
+                                  ? FontStyle.normal
+                                  : FontStyle.italic,
+                              height: 1.5),
+                        ),
+                      ],
+                    ),
+                  ),
                   // ── HISTORY ──
                   if (_history.length > 1) ...[
                     const SizedBox(height: 16),
@@ -618,7 +604,8 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
                   _orders.isEmpty
                       ? Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(16),
+                    padding:
+                    const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius:
@@ -631,145 +618,138 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
                       textAlign: TextAlign.center,
                       style: GoogleFonts.dmSans(
                           fontSize: 12,
-                          color:
-                          const Color(0xFFB090A0),
-                          fontStyle: FontStyle.italic),
+                          color: const Color(
+                              0xFFB090A0),
+                          fontStyle:
+                          FontStyle.italic),
                     ),
                   )
                       : Column(
                     children: _orders
-                        .map(
-                          (order) => GestureDetector(
-                        onTap: () =>
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    OrderDetailScreen(
-                                      order: order,
-                                      clientName:
-                                      client.name,
-                                    ),
-                              ),
-                            ).then(
-                                    (_) => _loadData()),
-                        child: Container(
-                          margin:
-                          const EdgeInsets.only(
-                              bottom: 8),
-                          padding:
-                          const EdgeInsets.all(
-                              12),
-                          decoration: BoxDecoration(
-                            color: _black,
-                            borderRadius:
-                            BorderRadius.circular(
-                                12),
-                          ),
-                          child: Column(
-                            crossAxisAlignment:
-                            CrossAxisAlignment
-                                .start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment
-                                    .spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      order.outfitName,
-                                      style: GoogleFonts
-                                          .dmSans(
-                                        fontSize: 13,
-                                        fontWeight:
-                                        FontWeight
-                                            .w500,
-                                        color: Colors
-                                            .white,
+                        .map((order) =>
+                        GestureDetector(
+                          onTap: () =>
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      OrderDetailScreen(
+                                        order: order,
+                                        clientName:
+                                        client.name,
+                                      ),
+                                ),
+                              ).then((_) =>
+                                  _loadData()),
+                          child: Container(
+                            margin: const EdgeInsets
+                                .only(bottom: 8),
+                            padding:
+                            const EdgeInsets
+                                .all(12),
+                            decoration:
+                            BoxDecoration(
+                              color: _black,
+                              borderRadius:
+                              BorderRadius
+                                  .circular(12),
+                            ),
+                            child: Column(
+                              crossAxisAlignment:
+                              CrossAxisAlignment
+                                  .start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment
+                                      .spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        order.outfitName,
+                                        style: GoogleFonts.dmSans(
+                                            fontSize:
+                                            13,
+                                            fontWeight:
+                                            FontWeight
+                                                .w500,
+                                            color: Colors
+                                                .white),
                                       ),
                                     ),
-                                  ),
-                                  if (order.price !=
-                                      null)
-                                    Text(
-                                      '₦${order.price!.toStringAsFixed(0)}',
-                                      style: GoogleFonts
-                                          .dmSans(
-                                        fontSize: 14,
-                                        color: const Color(
-                                            0xFFF4C0D1),
-                                        fontWeight:
-                                        FontWeight
-                                            .w500,
+                                    if (order.price !=
+                                        null)
+                                      Text(
+                                        '₦${order.price!.toStringAsFixed(0)}',
+                                        style: GoogleFonts.dmSans(
+                                            fontSize:
+                                            14,
+                                            color: const Color(
+                                                0xFFF4C0D1),
+                                            fontWeight:
+                                            FontWeight
+                                                .w500),
                                       ),
-                                    ),
+                                  ],
+                                ),
+                                if (order.fabric !=
+                                    null) ...[
+                                  const SizedBox(
+                                      height: 4),
+                                  Text(
+                                      order.fabric!,
+                                      style: GoogleFonts.dmSans(
+                                          fontSize:
+                                          11,
+                                          color: const Color(
+                                              0xFF9A7F8A))),
                                 ],
-                              ),
-                              if (order.fabric !=
-                                  null) ...[
+                                if (order.dueDate !=
+                                    null) ...[
+                                  const SizedBox(
+                                      height: 4),
+                                  Text(
+                                    'Due ${order.dueDate!.substring(0, 10)}',
+                                    style: GoogleFonts.dmSans(
+                                        fontSize: 10,
+                                        color: const Color(
+                                            0xFF7A5060),
+                                        fontStyle:
+                                        FontStyle
+                                            .italic),
+                                  ),
+                                ],
                                 const SizedBox(
-                                    height: 4),
-                                Text(
-                                  order.fabric!,
-                                  style: GoogleFonts
-                                      .dmSans(
-                                    fontSize: 11,
-                                    color: const Color(
-                                        0xFF9A7F8A),
+                                    height: 8),
+                                Container(
+                                  padding: const EdgeInsets
+                                      .symmetric(
+                                      horizontal:
+                                      8,
+                                      vertical:
+                                      3),
+                                  decoration:
+                                  BoxDecoration(
+                                    color: _pinkBlush,
+                                    borderRadius:
+                                    BorderRadius
+                                        .circular(
+                                        6),
+                                  ),
+                                  child: Text(
+                                    order.status,
+                                    style: GoogleFonts.dmSans(
+                                        fontSize: 9,
+                                        color: _pink,
+                                        fontWeight:
+                                        FontWeight
+                                            .w500),
                                   ),
                                 ),
                               ],
-                              if (order.dueDate !=
-                                  null) ...[
-                                const SizedBox(
-                                    height: 4),
-                                Text(
-                                  'Due ${order.dueDate!.substring(0, 10)}',
-                                  style: GoogleFonts
-                                      .dmSans(
-                                    fontSize: 10,
-                                    color: const Color(
-                                        0xFF7A5060),
-                                    fontStyle:
-                                    FontStyle
-                                        .italic,
-                                  ),
-                                ),
-                              ],
-                              const SizedBox(
-                                  height: 8),
-                              Container(
-                                padding: const EdgeInsets
-                                    .symmetric(
-                                  horizontal: 8,
-                                  vertical: 3,
-                                ),
-                                decoration:
-                                BoxDecoration(
-                                  color: _pinkBlush,
-                                  borderRadius:
-                                  BorderRadius
-                                      .circular(
-                                      6),
-                                ),
-                                child: Text(
-                                  order.status,
-                                  style: GoogleFonts
-                                      .dmSans(
-                                    fontSize: 9,
-                                    color: _pink,
-                                    fontWeight:
-                                    FontWeight
-                                        .w500,
-                                  ),
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
-                    )
+                        ))
                         .toList(),
                   ),
 
@@ -798,8 +778,9 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
             value != null ? '${value}"' : '—',
             style: GoogleFonts.dmSans(
                 fontSize: 15,
-                color:
-                value != null ? _pink : const Color(0xFFD0B0C0),
+                color: value != null
+                    ? _pink
+                    : const Color(0xFFD0B0C0),
                 fontWeight: FontWeight.w500),
           ),
           Container(height: 1, color: const Color(0xFFEDE4DC)),
@@ -825,8 +806,9 @@ class _ClientProfileScreenState extends State<ClientProfileScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon,
-                color:
-                filled ? Colors.white : const Color(0xFFF4C0D1),
+                color: filled
+                    ? Colors.white
+                    : const Color(0xFFF4C0D1),
                 size: 12),
             const SizedBox(width: 3),
             Text(label,

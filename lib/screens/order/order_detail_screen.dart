@@ -240,8 +240,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
   // ── ADD MANUAL EXPENSE ──
   void _addManualExpense() {
-    final descCtrl = TextEditingController();
-    final amountCtrl = TextEditingController();
+    final notesCtrl = TextEditingController();
 
     showModalBottomSheet(
       context: context,
@@ -259,32 +258,78 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Add Expense',
+            Text('Add Expenses',
                 style: GoogleFonts.playfairDisplay(
                     fontSize: 18, color: _black)),
+            const SizedBox(height: 6),
+            Text(
+              'Write each item and price on a new line\ne.g.\nLace: 20000\nThread: 500\nLabour: 15000',
+              style: GoogleFonts.dmSans(
+                  fontSize: 12,
+                  color: const Color(0xFFB090A0),
+                  fontStyle: FontStyle.italic),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: notesCtrl,
+              maxLines: 8,
+              autofocus: true,
+              style: GoogleFonts.dmSans(fontSize: 13, color: _black),
+              decoration: InputDecoration(
+                hintText:
+                'Lace: 20000\nThread: 500\nLabour: 15000\nZip: 800',
+                hintStyle: GoogleFonts.dmSans(
+                    color: const Color(0xFFD0B0C0),
+                    fontSize: 12,
+                    fontStyle: FontStyle.italic),
+                filled: true,
+                fillColor: _cream,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: _pinkSoft),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: _pinkSoft),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide:
+                  const BorderSide(color: _pink, width: 1.5),
+                ),
+                contentPadding: const EdgeInsets.all(14),
+              ),
+            ),
             const SizedBox(height: 16),
-            _sheetField('Description', descCtrl,
-                hint: 'e.g. Extra lace, buttons'),
-            const SizedBox(height: 10),
-            _sheetField('Amount (₦)', amountCtrl,
-                keyboard: TextInputType.number,
-                hint: 'e.g. 5000'),
-            const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               height: 48,
               child: ElevatedButton(
                 onPressed: () async {
-                  if (descCtrl.text.isEmpty ||
-                      amountCtrl.text.isEmpty) return;
                   final provider = context.read<ClientProvider>();
-                  await provider.addExpense(Expense(
-                    orderId: _order.id!,
-                    description: descCtrl.text.trim(),
-                    amount:
-                    double.tryParse(amountCtrl.text.trim()) ??
-                        0,
-                  ));
+                  final lines = notesCtrl.text
+                      .split('\n')
+                      .where((l) => l.trim().isNotEmpty)
+                      .toList();
+
+                  for (final line in lines) {
+                    // parse "Item name: 20000" format
+                    final parts = line.split(':');
+                    if (parts.length >= 2) {
+                      final description = parts[0].trim();
+                      final amount = double.tryParse(
+                          parts.last.trim().replaceAll(',', '')) ??
+                          0;
+                      if (description.isNotEmpty && amount > 0) {
+                        await provider.addExpense(Expense(
+                          orderId: _order.id!,
+                          description: description,
+                          amount: amount,
+                        ));
+                      }
+                    }
+                  }
+
                   if (mounted) Navigator.pop(ctx);
                   _loadData();
                 },
@@ -296,7 +341,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   ),
                   elevation: 0,
                 ),
-                child: Text('Add',
+                child: Text('Add All',
                     style: GoogleFonts.dmSans(
                         fontSize: 14,
                         fontWeight: FontWeight.w500)),
