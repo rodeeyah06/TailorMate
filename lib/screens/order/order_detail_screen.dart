@@ -240,114 +240,319 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
   // ── ADD MANUAL EXPENSE ──
   void _addManualExpense() {
-    final notesCtrl = TextEditingController();
+    // list of controllers for multiple rows
+    final List<TextEditingController> descCtrls = [
+      TextEditingController()
+    ];
+    final List<TextEditingController> amountCtrls = [
+      TextEditingController()
+    ];
 
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.white,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius:
+        BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(
-          left: 20, right: 20, top: 20,
-          bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Add Expenses',
-                style: GoogleFonts.playfairDisplay(
-                    fontSize: 18, color: _black)),
-            const SizedBox(height: 6),
-            Text(
-              'Write each item and price on a new line\ne.g.\nLace: 20000\nThread: 500\nLabour: 15000',
-              style: GoogleFonts.dmSans(
-                  fontSize: 12,
-                  color: const Color(0xFFB090A0),
-                  fontStyle: FontStyle.italic),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: notesCtrl,
-              maxLines: 8,
-              autofocus: true,
-              style: GoogleFonts.dmSans(fontSize: 13, color: _black),
-              decoration: InputDecoration(
-                hintText:
-                'Lace: 20000\nThread: 500\nLabour: 15000\nZip: 800',
-                hintStyle: GoogleFonts.dmSans(
-                    color: const Color(0xFFD0B0C0),
-                    fontSize: 12,
-                    fontStyle: FontStyle.italic),
-                filled: true,
-                fillColor: _cream,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: _pinkSoft),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: _pinkSoft),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide:
-                  const BorderSide(color: _pink, width: 1.5),
-                ),
-                contentPadding: const EdgeInsets.all(14),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setModalState) => Padding(
+          padding: EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 20,
+            bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // header
+              Row(
+                mainAxisAlignment:
+                MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Add Expenses',
+                      style: GoogleFonts.playfairDisplay(
+                          fontSize: 18, color: _black)),
+                  GestureDetector(
+                    onTap: () {
+                      setModalState(() {
+                        descCtrls
+                            .add(TextEditingController());
+                        amountCtrls
+                            .add(TextEditingController());
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: _pinkBlush,
+                        borderRadius:
+                        BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.add_rounded,
+                              color: _pink, size: 14),
+                          const SizedBox(width: 4),
+                          Text('Add row',
+                              style: GoogleFonts.dmSans(
+                                  fontSize: 11,
+                                  color: _pink,
+                                  fontWeight:
+                                  FontWeight.w500)),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: ElevatedButton(
-                onPressed: () async {
-                  final provider = context.read<ClientProvider>();
-                  final lines = notesCtrl.text
-                      .split('\n')
-                      .where((l) => l.trim().isNotEmpty)
-                      .toList();
+              const SizedBox(height: 12),
 
-                  for (final line in lines) {
-                    // parse "Item name: 20000" format
-                    final parts = line.split(':');
-                    if (parts.length >= 2) {
-                      final description = parts[0].trim();
+              // column headers
+              Row(
+                children: [
+                  const SizedBox(width: 28),
+                  Expanded(
+                    flex: 3,
+                    child: Text('Description',
+                        style: GoogleFonts.dmSans(
+                            fontSize: 10,
+                            color: const Color(0xFFB090A0),
+                            fontWeight: FontWeight.w500)),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    flex: 2,
+                    child: Text('Amount (₦)',
+                        style: GoogleFonts.dmSans(
+                            fontSize: 10,
+                            color: const Color(0xFFB090A0),
+                            fontWeight: FontWeight.w500)),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+
+              // expense rows
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight:
+                  MediaQuery.of(ctx).size.height * 0.35,
+                ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: List.generate(
+                      descCtrls.length,
+                          (i) => Padding(
+                        padding: const EdgeInsets.only(
+                            bottom: 8),
+                        child: Row(
+                          children: [
+                            // row number
+                            Container(
+                              width: 22,
+                              height: 22,
+                              decoration: BoxDecoration(
+                                color: _pinkBlush,
+                                borderRadius:
+                                BorderRadius.circular(6),
+                              ),
+                              child: Center(
+                                child: Text('${i + 1}',
+                                    style: GoogleFonts.dmSans(
+                                        fontSize: 9,
+                                        color: _pink,
+                                        fontWeight:
+                                        FontWeight.w500)),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+
+                            // description field
+                            Expanded(
+                              flex: 3,
+                              child: TextField(
+                                controller: descCtrls[i],
+                                style: GoogleFonts.dmSans(
+                                    fontSize: 13,
+                                    color: _black),
+                                decoration: InputDecoration(
+                                  hintText:
+                                  'e.g. Lace fabric',
+                                  hintStyle: GoogleFonts.dmSans(
+                                      color: const Color(
+                                          0xFFD0B0C0),
+                                      fontSize: 11,
+                                      fontStyle:
+                                      FontStyle.italic),
+                                  filled: true,
+                                  fillColor: _cream,
+                                  border: OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(
+                                        10),
+                                    borderSide: const BorderSide(
+                                        color: _pinkSoft),
+                                  ),
+                                  enabledBorder:
+                                  OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(
+                                        10),
+                                    borderSide: const BorderSide(
+                                        color: _pinkSoft),
+                                  ),
+                                  focusedBorder:
+                                  OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(
+                                        10),
+                                    borderSide: const BorderSide(
+                                        color: _pink,
+                                        width: 1.5),
+                                  ),
+                                  contentPadding:
+                                  const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 10),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+
+                            // amount field
+                            Expanded(
+                              flex: 2,
+                              child: TextField(
+                                controller: amountCtrls[i],
+                                keyboardType:
+                                TextInputType.number,
+                                style: GoogleFonts.dmSans(
+                                  fontSize: 13,
+                                  color: _pink,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                decoration: InputDecoration(
+                                  hintText: '0',
+                                  hintStyle: GoogleFonts.dmSans(
+                                      color: const Color(
+                                          0xFFD0B0C0),
+                                      fontSize: 11),
+                                  filled: true,
+                                  fillColor: _cream,
+                                  border: OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(
+                                        10),
+                                    borderSide: const BorderSide(
+                                        color: _pinkSoft),
+                                  ),
+                                  enabledBorder:
+                                  OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(
+                                        10),
+                                    borderSide: const BorderSide(
+                                        color: _pinkSoft),
+                                  ),
+                                  focusedBorder:
+                                  OutlineInputBorder(
+                                    borderRadius:
+                                    BorderRadius.circular(
+                                        10),
+                                    borderSide: const BorderSide(
+                                        color: _pink,
+                                        width: 1.5),
+                                  ),
+                                  contentPadding:
+                                  const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 10),
+                                ),
+                              ),
+                            ),
+
+                            // delete row button
+                            if (descCtrls.length > 1) ...[
+                              const SizedBox(width: 4),
+                              GestureDetector(
+                                onTap: () {
+                                  setModalState(() {
+                                    descCtrls
+                                        .removeAt(i);
+                                    amountCtrls
+                                        .removeAt(i);
+                                  });
+                                },
+                                child: const Icon(
+                                  Icons.close_rounded,
+                                  color: Color(0xFFB090A0),
+                                  size: 16,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // save button
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final provider =
+                    context.read<ClientProvider>();
+                    for (int i = 0;
+                    i < descCtrls.length;
+                    i++) {
+                      final desc =
+                      descCtrls[i].text.trim();
                       final amount = double.tryParse(
-                          parts.last.trim().replaceAll(',', '')) ??
-                          0;
-                      if (description.isNotEmpty && amount > 0) {
+                          amountCtrls[i]
+                              .text
+                              .trim()
+                              .replaceAll(',', ''));
+                      if (desc.isNotEmpty &&
+                          amount != null &&
+                          amount > 0) {
                         await provider.addExpense(Expense(
                           orderId: _order.id!,
-                          description: description,
+                          description: desc,
                           amount: amount,
                         ));
                       }
                     }
-                  }
-
-                  if (mounted) Navigator.pop(ctx);
-                  _loadData();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _pink,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
+                    if (mounted) Navigator.pop(ctx);
+                    _loadData();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: _pink,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius:
+                      BorderRadius.circular(14),
+                    ),
+                    elevation: 0,
                   ),
-                  elevation: 0,
+                  child: Text('Save All Expenses',
+                      style: GoogleFonts.dmSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500)),
                 ),
-                child: Text('Add All',
-                    style: GoogleFonts.dmSans(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500)),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

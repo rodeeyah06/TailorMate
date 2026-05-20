@@ -3,13 +3,13 @@ import 'dart:io';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 class AiService {
-  static const _apiKey = 'AIzaSyDRPhfLgSPvQHLAkaFLvc0LLFqZ_-yo00s';
+  static const _apiKey = 'AIzaSyDERmeXhFqtXPn7C4MkuSycrPgfBeYY9Ic';
 
   // ── TEXT PARSE (WhatsApp import) ──
   static Future<Map<String, dynamic>> parseMeasurements(
       String text) async {
     final model = GenerativeModel(
-      model:  'gemini-1.5-flash-8b',
+      model:  'gemini-2.5-flash',
       apiKey: _apiKey,
     );
 
@@ -58,7 +58,7 @@ Return this exact JSON structure (use null for missing values):
     String? fabric,
   }) async {
     final model = GenerativeModel(
-      model: 'gemini-1.5-flash-8b',
+      model: 'gemini-2.5-flash',
       apiKey: _apiKey,
     );
 

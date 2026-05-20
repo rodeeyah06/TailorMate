@@ -52,7 +52,6 @@ class ClientDAO {
     );
   }
 
-
   // Delete a client
   Future<int> deleteClient(int id) async {
     final db = await _dbHelper.database;

@@ -7,7 +7,8 @@ import 'package:tailormate/providers/client_provider.dart';
 import 'package:tailormate/services/ai_service.dart';
 
 class WhatsAppParseScreen extends StatefulWidget {
-  const WhatsAppParseScreen({super.key});
+  final String? initialText;
+  const WhatsAppParseScreen({super.key, this.initialText});
 
   @override
   State<WhatsAppParseScreen> createState() =>
@@ -40,7 +41,6 @@ class _WhatsAppParseScreenState extends State<WhatsAppParseScreen> {
   static const _pink = Color(0xFFD4537E);
   static const _black = Color(0xFF1A1015);
   static const _pinkSoft = Color(0xFFF4C0D1);
-  static const _pinkBlush = Color(0xFFFBEAF0);
   static const _cream = Color(0xFFFDF8F2);
 
   @override
@@ -62,6 +62,15 @@ class _WhatsAppParseScreenState extends State<WhatsAppParseScreen> {
     _neckCtrl = TextEditingController();
     _backCtrl = TextEditingController();
     _notesCtrl = TextEditingController();
+
+    // pre-fill if text was shared from WhatsApp
+    if (widget.initialText != null &&
+        widget.initialText!.isNotEmpty) {
+      _textController.text = widget.initialText!;
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _parse();
+      });
+    }
   }
 
   @override
@@ -91,12 +100,14 @@ class _WhatsAppParseScreenState extends State<WhatsAppParseScreen> {
     _phoneCtrl.text = data['phone']?.toString() ?? '';
     _bustCtrl.text = data['bust']?.toString() ?? '';
     _underbustCtrl.text = data['underbust']?.toString() ?? '';
-    _nippleCtrl.text = data['nipple_to_nipple']?.toString() ?? '';
+    _nippleCtrl.text =
+        data['nipple_to_nipple']?.toString() ?? '';
     _waistCtrl.text = data['waist']?.toString() ?? '';
     _hipsCtrl.text = data['hips']?.toString() ?? '';
     _shoulderCtrl.text = data['shoulder']?.toString() ?? '';
     _sleeveCtrl.text = data['sleeve']?.toString() ?? '';
-    _sleeveLenCtrl.text = data['sleeve_length']?.toString() ?? '';
+    _sleeveLenCtrl.text =
+        data['sleeve_length']?.toString() ?? '';
     _fullLenCtrl.text = data['full_length']?.toString() ?? '';
     _halfLenCtrl.text = data['half_length']?.toString() ?? '';
     _thighCtrl.text = data['thigh']?.toString() ?? '';
@@ -214,7 +225,8 @@ class _WhatsAppParseScreenState extends State<WhatsAppParseScreen> {
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
                   child: Container(
-                    width: 36, height: 36,
+                    width: 36,
+                    height: 36,
                     decoration: BoxDecoration(
                       color: const Color(0xFF2C1F28),
                       borderRadius: BorderRadius.circular(10),
@@ -234,7 +246,8 @@ class _WhatsAppParseScreenState extends State<WhatsAppParseScreen> {
                   children: [
                     Text('Import from WhatsApp',
                         style: GoogleFonts.playfairDisplay(
-                            fontSize: 18, color: Colors.white)),
+                            fontSize: 18,
+                            color: Colors.white)),
                     Text(
                         'Paste message → AI extracts measurements',
                         style: GoogleFonts.dmSans(
@@ -277,7 +290,8 @@ class _WhatsAppParseScreenState extends State<WhatsAppParseScreen> {
                             fontSize: 12,
                             fontStyle: FontStyle.italic),
                         border: InputBorder.none,
-                        contentPadding: const EdgeInsets.all(14),
+                        contentPadding:
+                        const EdgeInsets.all(14),
                       ),
                     ),
                   ),
@@ -293,18 +307,21 @@ class _WhatsAppParseScreenState extends State<WhatsAppParseScreen> {
                         backgroundColor: _pink,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius:
+                          BorderRadius.circular(14),
                         ),
                         elevation: 0,
                       ),
                       child: _isParsing
                           ? const CircularProgressIndicator(
-                          color: Colors.white, strokeWidth: 2)
+                          color: Colors.white,
+                          strokeWidth: 2)
                           : Row(
                         mainAxisAlignment:
                         MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.auto_awesome,
+                          const Icon(
+                              Icons.auto_awesome,
                               size: 16),
                           const SizedBox(width: 6),
                           Text('Extract with AI',
@@ -321,14 +338,19 @@ class _WhatsAppParseScreenState extends State<WhatsAppParseScreen> {
                     const SizedBox(height: 20),
                     Row(
                       children: [
-                        const Icon(Icons.check_circle_outline,
-                            color: Color(0xFF7BC47F), size: 16),
+                        const Icon(
+                            Icons.check_circle_outline,
+                            color: Color(0xFF7BC47F),
+                            size: 16),
                         const SizedBox(width: 6),
-                        Text('AI extracted — review and confirm',
+                        Text(
+                            'AI extracted — review and confirm',
                             style: GoogleFonts.dmSans(
                                 fontSize: 12,
-                                color: const Color(0xFF7BC47F),
-                                fontWeight: FontWeight.w500)),
+                                color:
+                                const Color(0xFF7BC47F),
+                                fontWeight:
+                                FontWeight.w500)),
                       ],
                     ),
                     const SizedBox(height: 14),
@@ -377,7 +399,8 @@ class _WhatsAppParseScreenState extends State<WhatsAppParseScreen> {
                           backgroundColor: _pink,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius:
+                            BorderRadius.circular(16),
                           ),
                           elevation: 0,
                         ),
@@ -388,7 +411,8 @@ class _WhatsAppParseScreenState extends State<WhatsAppParseScreen> {
                             : Text('Save Client',
                             style: GoogleFonts.dmSans(
                                 fontSize: 15,
-                                fontWeight: FontWeight.w500)),
+                                fontWeight:
+                                FontWeight.w500)),
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -433,7 +457,8 @@ class _WhatsAppParseScreenState extends State<WhatsAppParseScreen> {
           controller: controller,
           maxLines: maxLines,
           keyboardType: keyboard,
-          style: GoogleFonts.dmSans(fontSize: 13, color: _black),
+          style:
+          GoogleFonts.dmSans(fontSize: 13, color: _black),
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
@@ -447,8 +472,8 @@ class _WhatsAppParseScreenState extends State<WhatsAppParseScreen> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide:
-              const BorderSide(color: _pink, width: 1.5),
+              borderSide: const BorderSide(
+                  color: _pink, width: 1.5),
             ),
             contentPadding: const EdgeInsets.symmetric(
                 horizontal: 12, vertical: 10),
@@ -499,7 +524,8 @@ class _WhatsAppParseScreenState extends State<WhatsAppParseScreen> {
           decoration: InputDecoration(
             hintText: '—',
             hintStyle: GoogleFonts.dmSans(
-                color: const Color(0xFFD0B0C0), fontSize: 13),
+                color: const Color(0xFFD0B0C0),
+                fontSize: 13),
             filled: true,
             fillColor: Colors.white,
             border: OutlineInputBorder(
@@ -512,8 +538,8 @@ class _WhatsAppParseScreenState extends State<WhatsAppParseScreen> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
-              borderSide:
-              const BorderSide(color: _pink, width: 1.5),
+              borderSide: const BorderSide(
+                  color: _pink, width: 1.5),
             ),
             contentPadding: const EdgeInsets.symmetric(
                 horizontal: 10, vertical: 8),
