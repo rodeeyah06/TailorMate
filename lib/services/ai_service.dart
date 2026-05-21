@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 class AiService {
-  static const _apiKey = 'AIzaSyDERmeXhFqtXPn7C4MkuSycrPgfBeYY9Ic';
+  static const _apiKey = String.fromEnvironment('GEMINI_KEY');
 
   // ── TEXT PARSE (WhatsApp import) ──
   static Future<Map<String, dynamic>> parseMeasurements(
