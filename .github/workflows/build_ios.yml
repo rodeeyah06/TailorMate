@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build_ios:
     runs-on: macos-latest
@@ -17,6 +20,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.44.0'
+          channel: 'stable'
 
       - name: Install dependencies
         run: flutter pub get
@@ -24,7 +28,7 @@ jobs:
       - name: Install CocoaPods
         run: |
           cd ios
-          pod install
+          pod install --repo-update
 
       - name: Build IPA
         run: |
@@ -32,8 +36,15 @@ jobs:
             --no-codesign \
             --dart-define=GEMINI_KEY=${{ secrets.GEMINI_KEY }}
 
+      - name: List build output
+        run: |
+          find build/ios -name "*.ipa" 2>/dev/null || echo "No IPA found"
+          find build/ios -name "*.app" 2>/dev/null || echo "No app found"
+          ls -la build/ios/ || echo "No build folder"
+
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
           name: TailorMate-IPA
-          path: build/ios/ipa/*.ipa
+          path: build/ios/ipa/
+          if-no-files-found: warn
