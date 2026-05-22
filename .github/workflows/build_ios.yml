@@ -1,0 +1,39 @@
+name: Build iOS IPA
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_ios:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.44.0'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Install CocoaPods
+        run: |
+          cd ios
+          pod install
+
+      - name: Build IPA
+        run: |
+          flutter build ipa \
+            --no-codesign \
+            --dart-define=GEMINI_KEY=${{ secrets.GEMINI_KEY }}
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v3
+        with:
+          name: TailorMate-IPA
+          path: build/ios/ipa/*.ipa
