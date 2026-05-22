@@ -30,21 +30,23 @@ jobs:
           cd ios
           pod install --repo-update
 
-      - name: Build IPA
+      - name: Build iOS
         run: |
-          flutter build ipa \
-            --no-codesign \
+          flutter build ios --release --no-codesign \
             --dart-define=GEMINI_KEY=${{ secrets.GEMINI_KEY }}
 
-      - name: List build output
+      - name: Create IPA manually
         run: |
-          find build/ios -name "*.ipa" 2>/dev/null || echo "No IPA found"
-          find build/ios -name "*.app" 2>/dev/null || echo "No app found"
-          ls -la build/ios/ || echo "No build folder"
+          mkdir -p build/ios/ipa
+          cd build/ios/Release-iphoneos
+          mkdir -p Payload
+          cp -r Runner.app Payload/
+          zip -r ../ipa/TailorMate.ipa Payload
+          echo "IPA created successfully!"
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
           name: TailorMate-IPA
-          path: build/ios/ipa/
-          if-no-files-found: warn
+          path: build/ios/ipa/TailorMate.ipa
+          if-no-files-found: error
