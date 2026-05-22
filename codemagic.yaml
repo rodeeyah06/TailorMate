@@ -1,0 +1,22 @@
+workflows:
+  ios-workflow:
+    name: iOS Workflow
+    environment:
+      flutter: default
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Get Flutter packages
+        script: flutter pub get
+      - name: Pod install
+        script: |
+          cd ios
+          pod install
+      - name: Build IPA
+        script: |
+          flutter build ipa \
+            --release \
+            --no-codesign \
+            --dart-define=GEMINI_KEY=$GEMINI_KEY
+    artifacts:
+      - build/ios/ipa/*.ipa
