@@ -270,153 +270,474 @@ class PdfService {
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a5,
-        margin: const pw.EdgeInsets.all(32),
+        margin: const pw.EdgeInsets.all(0),
         build: (context) {
           return pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
+
               // ── HEADER ──
               pw.Container(
-                padding: const pw.EdgeInsets.all(16),
-                decoration: pw.BoxDecoration(
-                  color: const PdfColor.fromInt(0xFFD4537E),
-                  borderRadius: pw.BorderRadius.circular(8),
+                width: double.infinity,
+                padding: const pw.EdgeInsets.all(20),
+                decoration: const pw.BoxDecoration(
+                  color: PdfColor.fromInt(0xFFFBEAF0),
+                  border: pw.Border(
+                    bottom: pw.BorderSide(
+                      color: PdfColor.fromInt(0xFFF4C0D1),
+                      width: 0.5,
+                    ),
+                  ),
                 ),
                 child: pw.Row(
                   mainAxisAlignment:
                   pw.MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment:
+                  pw.CrossAxisAlignment.start,
                   children: [
                     pw.Column(
                       crossAxisAlignment:
                       pw.CrossAxisAlignment.start,
                       children: [
-                        pw.Text(
-                          'TailorMate',
-                          style: pw.TextStyle(
-                            fontSize: 20,
-                            fontWeight: pw.FontWeight.bold,
-                            color: PdfColors.white,
-                          ),
-                        ),
-                        pw.Text(
-                          'Order Receipt',
-                          style: const pw.TextStyle(
-                            fontSize: 11,
-                            color: PdfColors.white,
-                          ),
-                        ),
+                        pw.Text('TailorMate',
+                            style: pw.TextStyle(
+                              fontSize: 20,
+                              fontWeight: pw.FontWeight.bold,
+                              color: const PdfColor.fromInt(
+                                  0xFF4B1528),
+                            )),
+                        pw.SizedBox(height: 2),
+                        pw.Text("Mummy's Studio",
+                            style: const pw.TextStyle(
+                              fontSize: 9,
+                              color: PdfColor.fromInt(
+                                  0xFF993556),
+                            )),
                       ],
                     ),
-                    pw.Text(
-                      DateTime.now()
-                          .toIso8601String()
-                          .substring(0, 10),
-                      style: const pw.TextStyle(
-                        fontSize: 10,
-                        color: PdfColors.white,
-                      ),
+                    pw.Column(
+                      crossAxisAlignment:
+                      pw.CrossAxisAlignment.end,
+                      children: [
+                        pw.Text('RECEIPT',
+                            style: pw.TextStyle(
+                              fontSize: 11,
+                              fontWeight: pw.FontWeight.bold,
+                              color: const PdfColor.fromInt(
+                                  0xFFD4537E),
+                              letterSpacing: 1,
+                            )),
+                        pw.SizedBox(height: 2),
+                        pw.Text(
+                            '#${order.id.toString().padLeft(4, '0')}',
+                            style: const pw.TextStyle(
+                              fontSize: 10,
+                              color: PdfColor.fromInt(
+                                  0xFF993556),
+                            )),
+                      ],
                     ),
                   ],
                 ),
               ),
 
-              pw.SizedBox(height: 20),
+              // ── BODY ──
+              pw.Expanded(
+                child: pw.Container(
+                  width: double.infinity,
+                  color: const PdfColor.fromInt(0xFFFDF8F2),
+                  padding: const pw.EdgeInsets.all(20),
+                  child: pw.Column(
+                    crossAxisAlignment:
+                    pw.CrossAxisAlignment.start,
+                    children: [
 
-              // ── CLIENT INFO ──
-              pw.Text(
-                'Bill To',
-                style: pw.TextStyle(
-                  fontSize: 11,
-                  color: const PdfColor.fromInt(0xFFD4537E),
-                  fontWeight: pw.FontWeight.bold,
+                      // meta row
+                      pw.Row(
+                        mainAxisAlignment:
+                        pw.MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment:
+                        pw.CrossAxisAlignment.start,
+                        children: [
+                          pw.Column(
+                            crossAxisAlignment:
+                            pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text('BILL TO',
+                                  style: pw.TextStyle(
+                                    fontSize: 8,
+                                    fontWeight:
+                                    pw.FontWeight.bold,
+                                    color: const PdfColor
+                                        .fromInt(0xFFD4537E),
+                                    letterSpacing: 1.5,
+                                  )),
+                              pw.SizedBox(height: 4),
+                              pw.Text(clientName,
+                                  style: pw.TextStyle(
+                                    fontSize: 14,
+                                    fontWeight:
+                                    pw.FontWeight.bold,
+                                    color: const PdfColor
+                                        .fromInt(0xFF1A1015),
+                                  )),
+                              if (clientPhone != null)
+                                pw.Text(clientPhone,
+                                    style: const pw.TextStyle(
+                                      fontSize: 10,
+                                      color: PdfColor.fromInt(
+                                          0xFF993556),
+                                    )),
+                            ],
+                          ),
+                          pw.Column(
+                            crossAxisAlignment:
+                            pw.CrossAxisAlignment.end,
+                            children: [
+                              pw.Text('DATE',
+                                  style: pw.TextStyle(
+                                    fontSize: 8,
+                                    fontWeight:
+                                    pw.FontWeight.bold,
+                                    color: const PdfColor
+                                        .fromInt(0xFFD4537E),
+                                    letterSpacing: 1.5,
+                                  )),
+                              pw.SizedBox(height: 3),
+                              pw.Text(
+                                  DateTime.now()
+                                      .toIso8601String()
+                                      .substring(0, 10),
+                                  style: const pw.TextStyle(
+                                    fontSize: 10,
+                                    color: PdfColor.fromInt(
+                                        0xFF4B1528),
+                                  )),
+                              pw.SizedBox(height: 8),
+                              pw.Text('DUE DATE',
+                                  style: pw.TextStyle(
+                                    fontSize: 8,
+                                    fontWeight:
+                                    pw.FontWeight.bold,
+                                    color: const PdfColor
+                                        .fromInt(0xFFD4537E),
+                                    letterSpacing: 1.5,
+                                  )),
+                              pw.SizedBox(height: 3),
+                              pw.Text(
+                                  order.dueDate != null
+                                      ? order.dueDate!
+                                      .substring(0, 10)
+                                      : 'N/A',
+                                  style: const pw.TextStyle(
+                                    fontSize: 10,
+                                    color: PdfColor.fromInt(
+                                        0xFF4B1528),
+                                  )),
+                            ],
+                          ),
+                        ],
+                      ),
+
+                      pw.SizedBox(height: 16),
+
+                      // table header
+                      pw.Container(
+                        padding: const pw.EdgeInsets.only(
+                            bottom: 6),
+                        decoration: const pw.BoxDecoration(
+                          border: pw.Border(
+                            bottom: pw.BorderSide(
+                              color:
+                              PdfColor.fromInt(0xFFD4537E),
+                              width: 1.5,
+                            ),
+                          ),
+                        ),
+                        child: pw.Row(
+                          children: [
+                            pw.Expanded(
+                              flex: 4,
+                              child: pw.Text('DESCRIPTION',
+                                  style: pw.TextStyle(
+                                    fontSize: 8,
+                                    fontWeight:
+                                    pw.FontWeight.bold,
+                                    color: const PdfColor
+                                        .fromInt(0xFFD4537E),
+                                    letterSpacing: 1,
+                                  )),
+                            ),
+                            pw.Expanded(
+                              flex: 1,
+                              child: pw.Text('QTY',
+                                  textAlign:
+                                  pw.TextAlign.center,
+                                  style: pw.TextStyle(
+                                    fontSize: 8,
+                                    fontWeight:
+                                    pw.FontWeight.bold,
+                                    color: const PdfColor
+                                        .fromInt(0xFFD4537E),
+                                    letterSpacing: 1,
+                                  )),
+                            ),
+                            pw.Expanded(
+                              flex: 2,
+                              child: pw.Text('AMOUNT',
+                                  textAlign:
+                                  pw.TextAlign.right,
+                                  style: pw.TextStyle(
+                                    fontSize: 8,
+                                    fontWeight:
+                                    pw.FontWeight.bold,
+                                    color: const PdfColor
+                                        .fromInt(0xFFD4537E),
+                                    letterSpacing: 1,
+                                  )),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // table row
+                      pw.Container(
+                        padding: const pw.EdgeInsets.symmetric(
+                            vertical: 10),
+                        decoration: const pw.BoxDecoration(
+                          border: pw.Border(
+                            bottom: pw.BorderSide(
+                              color:
+                              PdfColor.fromInt(0xFFF4C0D1),
+                              width: 0.5,
+                            ),
+                          ),
+                        ),
+                        child: pw.Row(
+                          children: [
+                            pw.Expanded(
+                              flex: 4,
+                              child: pw.Column(
+                                crossAxisAlignment:
+                                pw.CrossAxisAlignment
+                                    .start,
+                                children: [
+                                  pw.Text(order.outfitName,
+                                      style: pw.TextStyle(
+                                        fontSize: 12,
+                                        fontWeight:
+                                        pw.FontWeight.bold,
+                                        color: const PdfColor
+                                            .fromInt(
+                                            0xFF1A1015),
+                                      )),
+                                  if (order.fabric != null)
+                                    pw.Text(order.fabric!,
+                                        style:
+                                        const pw.TextStyle(
+                                          fontSize: 9,
+                                          color:
+                                          PdfColor.fromInt(
+                                              0xFF993556),
+                                        )),
+                                ],
+                              ),
+                            ),
+                            pw.Expanded(
+                              flex: 1,
+                              child: pw.Text('1',
+                                  textAlign:
+                                  pw.TextAlign.center,
+                                  style: const pw.TextStyle(
+                                    fontSize: 11,
+                                    color: PdfColor.fromInt(
+                                        0xFF4B1528),
+                                  )),
+                            ),
+                            pw.Expanded(
+                              flex: 2,
+                              child: pw.Text(
+                                  total > 0
+                                      ? '₦${total.toStringAsFixed(0)}'
+                                      : order.price != null
+                                      ? '₦${order.price!.toStringAsFixed(0)}'
+                                      : '—',
+                                  textAlign:
+                                  pw.TextAlign.right,
+                                  style: pw.TextStyle(
+                                    fontSize: 12,
+                                    fontWeight:
+                                    pw.FontWeight.bold,
+                                    color: const PdfColor
+                                        .fromInt(0xFFD4537E),
+                                  )),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      pw.SizedBox(height: 10),
+
+                      // subtotal
+                      pw.Row(
+                        mainAxisAlignment:
+                        pw.MainAxisAlignment.spaceBetween,
+                        children: [
+                          pw.Text('Subtotal',
+                              style: const pw.TextStyle(
+                                fontSize: 10,
+                                color:
+                                PdfColor.fromInt(0xFF993556),
+                              )),
+                          pw.Text(
+                              total > 0
+                                  ? '₦${total.toStringAsFixed(0)}'
+                                  : order.price != null
+                                  ? '₦${order.price!.toStringAsFixed(0)}'
+                                  : '—',
+                              style: const pw.TextStyle(
+                                fontSize: 10,
+                                color:
+                                PdfColor.fromInt(0xFF993556),
+                              )),
+                        ],
+                      ),
+                      pw.SizedBox(height: 6),
+                      pw.Row(
+                        mainAxisAlignment:
+                        pw.MainAxisAlignment.spaceBetween,
+                        children: [
+                          pw.Text('Status',
+                              style: const pw.TextStyle(
+                                fontSize: 10,
+                                color:
+                                PdfColor.fromInt(0xFF993556),
+                              )),
+                          pw.Text(
+                              order.status.toUpperCase(),
+                              style: pw.TextStyle(
+                                fontSize: 9,
+                                fontWeight: pw.FontWeight.bold,
+                                color: const PdfColor.fromInt(
+                                    0xFF3B6D11),
+                              )),
+                        ],
+                      ),
+
+                      pw.SizedBox(height: 10),
+                      pw.Container(
+                          height: 0.5,
+                          color: const PdfColor.fromInt(
+                              0xFFD4537E)),
+                      pw.SizedBox(height: 10),
+
+                      // total
+                      pw.Row(
+                        mainAxisAlignment:
+                        pw.MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment:
+                        pw.CrossAxisAlignment.center,
+                        children: [
+                          pw.Text('Total',
+                              style: pw.TextStyle(
+                                fontSize: 14,
+                                fontWeight: pw.FontWeight.bold,
+                                color: const PdfColor.fromInt(
+                                    0xFF1A1015),
+                              )),
+                          pw.Text(
+                              total > 0
+                                  ? '₦${total.toStringAsFixed(0)}'
+                                  : order.price != null
+                                  ? '₦${order.price!.toStringAsFixed(0)}'
+                                  : '—',
+                              style: pw.TextStyle(
+                                fontSize: 22,
+                                fontWeight: pw.FontWeight.bold,
+                                color: const PdfColor.fromInt(
+                                    0xFFD4537E),
+                              )),
+                        ],
+                      ),
+
+                      pw.SizedBox(height: 16),
+
+                      // thank you box
+                      pw.Container(
+                        width: double.infinity,
+                        padding: const pw.EdgeInsets.all(12),
+                        decoration: pw.BoxDecoration(
+                          color: const PdfColor.fromInt(
+                              0xFFFBEAF0),
+                          border: pw.Border.all(
+                            color: const PdfColor.fromInt(
+                                0xFFF4C0D1),
+                            width: 0.5,
+                          ),
+                          borderRadius:
+                          pw.BorderRadius.circular(6),
+                        ),
+                        child: pw.Column(
+                          children: [
+                            pw.Text(
+                                'Thank you for your patronage!',
+                                textAlign: pw.TextAlign.center,
+                                style: pw.TextStyle(
+                                  fontSize: 11,
+                                  fontWeight:
+                                  pw.FontWeight.bold,
+                                  color: const PdfColor
+                                      .fromInt(0xFFD4537E),
+                                )),
+                            pw.SizedBox(height: 4),
+                            pw.Text(
+                                'We appreciate your trust and look forward to serving you again.',
+                                textAlign: pw.TextAlign.center,
+                                style: const pw.TextStyle(
+                                  fontSize: 9,
+                                  color: PdfColor.fromInt(
+                                      0xFF993556),
+                                )),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              pw.SizedBox(height: 6),
-              pw.Text(clientName,
-                  style: pw.TextStyle(
-                      fontSize: 16,
-                      fontWeight: pw.FontWeight.bold)),
-              if (clientPhone != null) ...[
-                pw.SizedBox(height: 3),
-                pw.Text(clientPhone,
-                    style: const pw.TextStyle(
-                        fontSize: 12,
-                        color: PdfColors.grey700)),
-              ],
-
-              pw.SizedBox(height: 16),
-              pw.Divider(
-                  color: const PdfColor.fromInt(0xFFF4C0D1)),
-              pw.SizedBox(height: 16),
-
-              // ── ORDER DETAILS ──
-              pw.Text(
-                'Order Details',
-                style: pw.TextStyle(
-                  fontSize: 11,
-                  color: const PdfColor.fromInt(0xFFD4537E),
-                  fontWeight: pw.FontWeight.bold,
-                ),
-              ),
-              pw.SizedBox(height: 10),
-
-              _receiptRow('Outfit', order.outfitName),
-              if (order.fabric != null)
-                _receiptRow('Fabric', order.fabric!),
-              if (order.dueDate != null)
-                _receiptRow('Due Date',
-                    order.dueDate!.substring(0, 10)),
-              _receiptRow(
-                  'Status', order.status.toUpperCase()),
-
-              pw.SizedBox(height: 16),
-              pw.Divider(
-                  color: const PdfColor.fromInt(0xFFF4C0D1)),
-              pw.SizedBox(height: 12),
-
-              // ── TOTAL ──
-              pw.Row(
-                mainAxisAlignment:
-                pw.MainAxisAlignment.spaceBetween,
-                children: [
-                  pw.Text(
-                    'Total Amount',
-                    style: pw.TextStyle(
-                      fontSize: 14,
-                      fontWeight: pw.FontWeight.bold,
-                    ),
-                  ),
-                  pw.Text(
-                    '₦${total.toStringAsFixed(0)}',
-                    style: pw.TextStyle(
-                      fontSize: 20,
-                      fontWeight: pw.FontWeight.bold,
-                      color: const PdfColor.fromInt(
-                          0xFFD4537E),
-                    ),
-                  ),
-                ],
-              ),
-
-              pw.Spacer(),
 
               // ── FOOTER ──
-              pw.Divider(
-                  color: const PdfColor.fromInt(0xFFF4C0D1)),
-              pw.SizedBox(height: 6),
-              pw.Center(
-                child: pw.Text(
-                  'Thank you for your patronage! 🎀',
-                  style: const pw.TextStyle(
-                      fontSize: 10, color: PdfColors.grey),
+              pw.Container(
+                width: double.infinity,
+                padding: const pw.EdgeInsets.symmetric(
+                    horizontal: 20, vertical: 10),
+                decoration: const pw.BoxDecoration(
+                  color: PdfColor.fromInt(0xFFFBEAF0),
+                  border: pw.Border(
+                    top: pw.BorderSide(
+                      color: PdfColor.fromInt(0xFFF4C0D1),
+                      width: 0.5,
+                    ),
+                  ),
                 ),
-              ),
-              pw.SizedBox(height: 4),
-              pw.Center(
-                child: pw.Text(
-                  'Generated by TailorMate',
-                  style: const pw.TextStyle(
-                      fontSize: 9, color: PdfColors.grey),
+                child: pw.Row(
+                  mainAxisAlignment:
+                  pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text('Generated by TailorMate',
+                        style: const pw.TextStyle(
+                          fontSize: 8,
+                          color: PdfColor.fromInt(0xFF993556),
+                        )),
+                    pw.Text(
+                        DateTime.now()
+                            .toIso8601String()
+                            .substring(0, 10),
+                        style: const pw.TextStyle(
+                          fontSize: 8,
+                          color: PdfColor.fromInt(0xFF993556),
+                        )),
+                  ],
                 ),
               ),
             ],

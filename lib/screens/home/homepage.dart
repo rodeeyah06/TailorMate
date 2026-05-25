@@ -7,6 +7,7 @@ import 'package:tailormate/screens/client/add_client_screen.dart';
 import 'package:tailormate/screens/client/client_profile_screen.dart';
 import 'package:tailormate/screens/client/clients_screen.dart';
 import 'package:tailormate/screens/client/whatsapp_parse_screen.dart';
+import 'package:tailormate/screens/order/order_detail_screen.dart';
 import 'package:tailormate/screens/order/orders_screen.dart';
 import 'package:tailormate/screens/settings/settings_screen.dart';
 
@@ -21,6 +22,7 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
   List<TailorOrder> _dueSoonOrders = [];
   List<TailorOrder> _allOrders = [];
+  List<TailorOrder> _recentOrders = [];
 
   static const _pink = Color(0xFFD4537E);
   static const _black = Color(0xFF1A1015);
@@ -50,6 +52,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _allOrders = allOrders;
       _dueSoonOrders = soon;
+      _recentOrders = allOrders.take(5).toList();
     });
   }
 
@@ -62,6 +65,24 @@ class _HomePageState extends State<HomePage> {
 
   int get _activeOrders =>
       _allOrders.where((o) => o.status != 'done').length;
+
+  Color _statusColor(String status) {
+    switch (status) {
+      case 'pending': return const Color(0xFFED93B1);
+      case 'in_progress': return const Color(0xFFEFD27B);
+      case 'done': return const Color(0xFF7BC47F);
+      default: return const Color(0xFFED93B1);
+    }
+  }
+
+  String _statusLabel(String status) {
+    switch (status) {
+      case 'pending': return 'Pending';
+      case 'in_progress': return 'In Progress';
+      case 'done': return 'Done';
+      default: return status;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +150,7 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             children: [
 
-              // ── CARD 1: HEADER (dark, no top radius) ──
+              // ── CARD 1: HEADER ──
               Container(
                 color: _black,
                 width: double.infinity,
@@ -184,7 +205,8 @@ class _HomePageState extends State<HomePage> {
                             Icons.people_outline_rounded,
                             const Color(0xFFED93B1)),
                         const SizedBox(width: 8),
-                        _statCard('$_activeOrders', 'Active Orders',
+                        _statCard('$_activeOrders',
+                            'Active Orders',
                             Icons.receipt_long_outlined,
                             const Color(0xFF7BA7ED)),
                         const SizedBox(width: 8),
@@ -200,7 +222,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
 
-              // ── CARD 2: QUICK ACTIONS (cream, overlaps header) ──
+              // ── CARD 2: QUICK ACTIONS ──
               Transform.translate(
                 offset: const Offset(0, -24),
                 child: Container(
@@ -217,7 +239,6 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // drag indicator
                       Center(
                         child: Container(
                           width: 36, height: 4,
@@ -296,80 +317,15 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
 
-              // ── CARD 3: FEATURES (dark, overlaps card 2) ──
-              Transform.translate(
-                offset: const Offset(0, -48),
-                child: Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: _black,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(28),
-                      topRight: Radius.circular(28),
-                    ),
-                  ),
-                  padding: const EdgeInsets.fromLTRB(
-                      20, 24, 20, 32),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Center(
-                        child: Container(
-                          width: 36, height: 4,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF4A2E40),
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          const Icon(Icons.auto_awesome,
-                              color: _pink, size: 16),
-                          const SizedBox(width: 6),
-                          Text('What TailorMate Can Do',
-                              style: GoogleFonts.playfairDisplay(
-                                  fontSize: 18, color: Colors.white)),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      _featureRow('📸', 'AI Dress Analysis',
-                          'Photo → full cost breakdown in Naira', _pink),
-                      _featureDivider(),
-                      _featureRow('📱', 'WhatsApp Import',
-                          'Paste message → AI extracts measurements',
-                          const Color(0xFF25D366)),
-                      _featureDivider(),
-                      _featureRow('📏', 'Measurement Book',
-                          'Beautiful book layout per client',
-                          const Color(0xFF7BA7ED)),
-                      _featureDivider(),
-                      _featureRow('🧾', 'PDF Receipts',
-                          'Generate & share to customers',
-                          const Color(0xFF7BC47F)),
-                      _featureDivider(),
-                      _featureRow('🛍️', 'Market Checklist',
-                          'Track what to buy per order',
-                          const Color(0xFFEFD27B)),
-                      _featureDivider(),
-                      _featureRow('🔔', 'Due Reminders',
-                          'Never miss a delivery date',
-                          const Color(0xFFED93B1)),
-                    ],
-                  ),
-                ),
-              ),
-
-              // ── CARD 4: DUE SOON (pink, overlaps card 3) ──
+              // ── CARD 3: DUE SOON ──
               if (_dueSoonOrders.isNotEmpty)
                 Transform.translate(
-                  offset: const Offset(0, -72),
+                  offset: const Offset(0, -48),
                   child: Container(
                     width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: _pinkBlush,
-                      borderRadius: const BorderRadius.only(
+                    decoration: const BoxDecoration(
+                      color: _black,
+                      borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(28),
                         topRight: Radius.circular(28),
                       ),
@@ -383,7 +339,7 @@ class _HomePageState extends State<HomePage> {
                           child: Container(
                             width: 36, height: 4,
                             decoration: BoxDecoration(
-                              color: _pinkSoft,
+                              color: const Color(0xFF4A2E40),
                               borderRadius: BorderRadius.circular(2),
                             ),
                           ),
@@ -392,11 +348,12 @@ class _HomePageState extends State<HomePage> {
                         Row(
                           children: [
                             Icon(Icons.schedule_rounded,
-                                color: Colors.red.shade400, size: 16),
+                                color: Colors.red.shade300, size: 16),
                             const SizedBox(width: 6),
                             Text('Due This Week',
                                 style: GoogleFonts.playfairDisplay(
-                                    fontSize: 18, color: _black)),
+                                    fontSize: 18,
+                                    color: Colors.white)),
                           ],
                         ),
                         const SizedBox(height: 14),
@@ -410,12 +367,12 @@ class _HomePageState extends State<HomePage> {
                             margin: const EdgeInsets.only(bottom: 8),
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              color: const Color(0xFF2C1F28),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
                                 color: daysLeft <= 2
-                                    ? Colors.red.shade200
-                                    : _pinkSoft,
+                                    ? Colors.red.shade900
+                                    : const Color(0xFF4A2E40),
                               ),
                             ),
                             child: Row(
@@ -424,10 +381,9 @@ class _HomePageState extends State<HomePage> {
                                   width: 44, height: 44,
                                   decoration: BoxDecoration(
                                     color: daysLeft <= 2
-                                        ? Colors.red.shade50
-                                        : _pinkBlush,
-                                    borderRadius:
-                                    BorderRadius.circular(10),
+                                        ? Colors.red.withValues(alpha: .2)
+                                        : const Color(0xFF3D1F2C),
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: Center(
                                     child: Column(
@@ -435,19 +391,16 @@ class _HomePageState extends State<HomePage> {
                                       MainAxisAlignment.center,
                                       children: [
                                         Text('$daysLeft',
-                                            style:
-                                            GoogleFonts.playfairDisplay(
-                                              fontSize: 18,
+                                            style: GoogleFonts.playfairDisplay(
+                                              fontSize: 16,
                                               color: daysLeft <= 2
-                                                  ? Colors.red
-                                                  : _pink,
+                                                  ? Colors.red.shade300
+                                                  : const Color(0xFFED93B1),
                                             )),
                                         Text('days',
                                             style: GoogleFonts.dmSans(
                                               fontSize: 8,
-                                              color: daysLeft <= 2
-                                                  ? Colors.red
-                                                  : _pink,
+                                              color: const Color(0xFF9A7F8A),
                                             )),
                                       ],
                                     ),
@@ -464,13 +417,12 @@ class _HomePageState extends State<HomePage> {
                                           style: GoogleFonts.dmSans(
                                               fontSize: 13,
                                               fontWeight: FontWeight.w500,
-                                              color: _black)),
+                                              color: Colors.white)),
                                       Text(
                                           'Due ${dueDate.day}/${dueDate.month}/${dueDate.year}',
                                           style: GoogleFonts.dmSans(
                                               fontSize: 10,
-                                              color:
-                                              const Color(0xFFB090A0))),
+                                              color: const Color(0xFF9A7F8A))),
                                     ],
                                   ),
                                 ),
@@ -478,7 +430,8 @@ class _HomePageState extends State<HomePage> {
                                   Text(
                                       '₦${order.price!.toStringAsFixed(0)}',
                                       style: GoogleFonts.playfairDisplay(
-                                          fontSize: 14, color: _pink)),
+                                          fontSize: 14,
+                                          color: const Color(0xFFF4C0D1))),
                               ],
                             ),
                           );
@@ -488,10 +441,156 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
 
-              // ── CARD 5: RECENT CLIENTS (white, overlaps card 4) ──
+              // ── CARD 4: RECENT ORDERS ──
               Transform.translate(
-                offset: Offset(
-                    0, _dueSoonOrders.isNotEmpty ? -96 : -72),
+                offset: Offset(0,
+                    _dueSoonOrders.isNotEmpty ? -72 : -48),
+                child: Container(
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: _pinkBlush,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(28),
+                      topRight: Radius.circular(28),
+                    ),
+                  ),
+                  padding: const EdgeInsets.fromLTRB(
+                      20, 24, 20, 32),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Center(
+                        child: Container(
+                          width: 36, height: 4,
+                          decoration: BoxDecoration(
+                            color: _pinkSoft,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment:
+                        MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Recent Orders',
+                              style: GoogleFonts.playfairDisplay(
+                                  fontSize: 18, color: _black)),
+                          GestureDetector(
+                            onTap: () => Navigator.push(context,
+                              MaterialPageRoute(
+                                  builder: (_) => const OrdersScreen()),
+                            ).then((_) => _loadOrders()),
+                            child: Text('See all',
+                                style: GoogleFonts.dmSans(
+                                    fontSize: 11, color: _pink)),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 14),
+                      if (_recentOrders.isEmpty)
+                        Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(20),
+                            child: Column(
+                              children: [
+                                const Text('🧾',
+                                    style: TextStyle(fontSize: 32)),
+                                const SizedBox(height: 8),
+                                Text('No orders yet',
+                                    style: GoogleFonts.playfairDisplay(
+                                        fontSize: 14,
+                                        color: const Color(0xFFB090A0))),
+                              ],
+                            ),
+                          ),
+                        )
+                      else
+                        ..._recentOrders.map((order) =>
+                            GestureDetector(
+                              onTap: () => Navigator.push(context,
+                                MaterialPageRoute(
+                                  builder: (_) => OrderDetailScreen(
+                                    order: order,
+                                    clientName: 'Client',
+                                  ),
+                                ),
+                              ).then((_) => _loadOrders()),
+                              child: Container(
+                                margin: const EdgeInsets.only(bottom: 8),
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(color: _pinkSoft),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                        children: [
+                                          Text(order.outfitName,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.dmSans(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: _black)),
+                                          if (order.dueDate != null)
+                                            Text(
+                                                'Due ${order.dueDate!.substring(0, 10)}',
+                                                style: GoogleFonts.dmSans(
+                                                    fontSize: 10,
+                                                    color: const Color(0xFFB090A0))),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.end,
+                                      children: [
+                                        if (order.price != null)
+                                          Text(
+                                              '₦${order.price!.toStringAsFixed(0)}',
+                                              style: GoogleFonts.playfairDisplay(
+                                                  fontSize: 13,
+                                                  color: _pink)),
+                                        const SizedBox(height: 4),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 3),
+                                          decoration: BoxDecoration(
+                                            color: _statusColor(order.status)
+                                                .withValues(alpha: .15),
+                                            borderRadius:
+                                            BorderRadius.circular(6),
+                                          ),
+                                          child: Text(
+                                              _statusLabel(order.status),
+                                              style: GoogleFonts.dmSans(
+                                                  fontSize: 9,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: _statusColor(
+                                                      order.status))),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // ── CARD 5: RECENT CLIENTS ──
+              Transform.translate(
+                offset: Offset(0,
+                    _dueSoonOrders.isNotEmpty ? -96 : -72),
                 child: Container(
                   width: double.infinity,
                   decoration: const BoxDecoration(
@@ -526,8 +625,7 @@ class _HomePageState extends State<HomePage> {
                           GestureDetector(
                             onTap: () => Navigator.push(context,
                               MaterialPageRoute(
-                                  builder: (_) =>
-                                  const ClientsScreen()),
+                                  builder: (_) => const ClientsScreen()),
                             ),
                             child: Text('See all',
                                 style: GoogleFonts.dmSans(
@@ -553,8 +651,7 @@ class _HomePageState extends State<HomePage> {
                                 Text('Tap + to add your first client',
                                     style: GoogleFonts.dmSans(
                                         fontSize: 12,
-                                        color:
-                                        const Color(0xFFC0A0B0))),
+                                        color: const Color(0xFFC0A0B0))),
                               ],
                             ),
                           ),
@@ -587,16 +684,13 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ).then((_) => provider.loadClients()),
                             child: Container(
-                              margin:
-                              const EdgeInsets.only(bottom: 8),
+                              margin: const EdgeInsets.only(bottom: 8),
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 12, vertical: 10),
                               decoration: BoxDecoration(
                                 color: _cream,
-                                borderRadius:
-                                BorderRadius.circular(12),
-                                border:
-                                Border.all(color: _pinkSoft),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: _pinkSoft),
                               ),
                               child: Row(
                                 children: [
@@ -611,22 +705,18 @@ class _HomePageState extends State<HomePage> {
                                   Container(
                                     width: 36, height: 36,
                                     decoration: BoxDecoration(
-                                      color:
-                                      avatarColors[colorIndex],
-                                      borderRadius:
-                                      BorderRadius.circular(10),
+                                      color: avatarColors[colorIndex],
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
                                     child: Center(
                                       child: Text(
                                         client.name.isNotEmpty
-                                            ? client.name[0]
-                                            .toUpperCase()
+                                            ? client.name[0].toUpperCase()
                                             : '?',
                                         style: GoogleFonts.dmSans(
                                           fontSize: 13,
                                           fontWeight: FontWeight.w500,
-                                          color:
-                                          textColors[colorIndex],
+                                          color: textColors[colorIndex],
                                         ),
                                       ),
                                     ),
@@ -640,8 +730,7 @@ class _HomePageState extends State<HomePage> {
                                         Text(client.name,
                                             style: GoogleFonts.dmSans(
                                                 fontSize: 13,
-                                                fontWeight:
-                                                FontWeight.w500,
+                                                fontWeight: FontWeight.w500,
                                                 color: _black)),
                                         if (client.phone != null)
                                           Text(client.phone!,
@@ -652,10 +741,8 @@ class _HomePageState extends State<HomePage> {
                                       ],
                                     ),
                                   ),
-                                  const Icon(
-                                      Icons.chevron_right_rounded,
-                                      color: Color(0xFFF4C0D1),
-                                      size: 18),
+                                  const Icon(Icons.chevron_right_rounded,
+                                      color: Color(0xFFF4C0D1), size: 18),
                                 ],
                               ),
                             ),
@@ -681,8 +768,8 @@ class _HomePageState extends State<HomePage> {
         decoration: BoxDecoration(
           color: color.withValues(alpha: .1),
           borderRadius: BorderRadius.circular(12),
-          border:
-          Border.all(color: color.withValues(alpha: .25)),
+          border: Border.all(
+              color: color.withValues(alpha: .25)),
         ),
         child: Row(
           children: [
@@ -715,8 +802,8 @@ class _HomePageState extends State<HomePage> {
         decoration: BoxDecoration(
           color: color.withValues(alpha: .08),
           borderRadius: BorderRadius.circular(14),
-          border:
-          Border.all(color: color.withValues(alpha: .25)),
+          border: Border.all(
+              color: color.withValues(alpha: .25)),
         ),
         child: Row(
           children: [
@@ -752,53 +839,4 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-  Widget _featureRow(String emoji, String title,
-      String subtitle, Color color) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        children: [
-          Container(
-            width: 40, height: 40,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: .15),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Center(
-              child: Text(emoji,
-                  style: const TextStyle(fontSize: 18)),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title,
-                    style: GoogleFonts.dmSans(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white)),
-                Text(subtitle,
-                    style: GoogleFonts.dmSans(
-                        fontSize: 10,
-                        color: const Color(0xFF9A7F8A))),
-              ],
-            ),
-          ),
-          Container(
-            width: 6, height: 6,
-            decoration:
-            BoxDecoration(color: color, shape: BoxShape.circle),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _featureDivider() => Container(
-    height: 1,
-    color: const Color(0xFF2C1F28),
-  );
 }
